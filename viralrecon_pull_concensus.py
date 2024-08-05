@@ -3,8 +3,10 @@
 import argparse
 import logging
 import sys
-import pandas as pd
 import boto3
+import os
+
+import pandas as pd
 
 from datetime import datetime
 from io import StringIO
@@ -53,13 +55,24 @@ def process_report(s3_report_uri):
 
     return passing_sample_names
 
-# def pull_consensus_seqs(uri_to_seqs, ids, output_path):
+def pull_consensus_seqs(uri_to_seqs, ids, output_path):
+    s3 = boto3.client('s3')
+
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    bucket_name, key = uri_to_seqs.replace("s3://", "").split("/", 1)
+
+    for id in ids:
+        print(id)
+        id_key = f"{key}/{id}.consensus.fa"
+        print(id_key)
 
 def main(args=None):
     args = parse_args(args)
     folder_path, date = make_folder_path()
     passing_ids = process_report(args.wslh_report)
-    # pull_consensus_seqs(args.uri_to_sequences, passing_ids, folder_path)
+    pull_consensus_seqs(args.uri_to_sequences, passing_ids, folder_path)
 
     
 if __name__ == "__main__":
