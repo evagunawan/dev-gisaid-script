@@ -11,6 +11,8 @@ import pandas as pd
 from datetime import datetime
 from io import StringIO
 
+# logging.basicConfig(level = logging.DEBUG, format = '%(levelname)s : %(message)s', force = True)
+
 def parse_args(args=None):
     Description=('Pull consensus sequences from viralrecon WSLH report.')
     Epilog = 'Example usage: python3 viralrecon_pull_consensus.py <WSLH_REPORT_URI> <FASTA_S3_URI>'
@@ -47,7 +49,7 @@ def process_report(s3_report_uri):
     logging.debug("Using pandas to extract samples that pass")
     df = pd.read_csv(StringIO(csv_content))
     passing_samples = df[df.iloc[:,1].str.lower() == "pass"]
-    passing_sample_names = passing_samples.iloc[:,0].tolist()
+    passing_sample_names = passing_samples.iloc[:,-1].tolist()
 
     for sample in passing_sample_names:
         if "Q" in sample:
@@ -63,10 +65,21 @@ def pull_consensus_seqs(uri_to_seqs, ids, output_path):
 
     bucket_name, key = uri_to_seqs.replace("s3://", "").split("/", 1)
 
+    logging.debug(f"This is bucket: {bucket_name}")
+    logging.debug(f"This is key: {key}")
+    logging.debug(f"This is output path: {output_path}")
+
     for id in ids:
-        print(id)
+
         id_key = f"{key}/{id}.consensus.fa"
-        print(id_key)
+        id_key = id_key.replace("//", "/")
+
+        try:
+            s3.download_file(bucket_name, id_key, output_path)
+        except s3.exceptions.NoSuchKey:
+            logging.error(f"File not found for {id_key}")
+        except Exception as e:
+            logging.error(f"Downloading {id_key} failed: {e}")
 
 def main(args=None):
     args = parse_args(args)
