@@ -73,9 +73,11 @@ def pull_consensus_seqs(uri_to_seqs, ids, output_path):
 
         id_key = f"{key}/{id}.consensus.fa"
         id_key = id_key.replace("//", "/")
+        local_file_path = os.path.join(output_path, f"{id}.consensus.fa")
 
         try:
-            s3.download_file(bucket_name, id_key, output_path)
+            s3.download_file(bucket_name, id_key, local_file_path)
+            logging.info(f"Successfully downloaded {id_key}")
         except s3.exceptions.NoSuchKey:
             logging.error(f"File not found for {id_key}")
         except Exception as e:
