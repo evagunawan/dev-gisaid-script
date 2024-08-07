@@ -9,11 +9,11 @@ import pandas as pd
 logging.basicConfig(level = logging.INFO, format = '%(levelname)s : %(message)s', force = True)
 
 def parse_args(args=None):
-    Description=('Evaluate viralrecon WSLH report.')
-    Epilog = 'Example usage: python3 final_report_evaluation.py <LOCAL_WSLH_REPORT>'
-    parser = argparse.ArgumentParser(description=Description)
+    description = 'Evaluate viralrecon WSLH report.'
+    epilog = 'Example usage: python3 final_report_evaluation.py <LOCAL_WSLH_REPORT>'
+    parser = argparse.ArgumentParser(description=description, epilog=epilog)
     parser.add_argument('wslh_report',
-        help='Report to be evaluated.')
+                        help='Report to be evaluated.')
     return parser.parse_args(args)
 
 def evaluate_columns_c_e(report):
