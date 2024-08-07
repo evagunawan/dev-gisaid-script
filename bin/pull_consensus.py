@@ -14,9 +14,9 @@ from io import StringIO
 logging.basicConfig(level = logging.INFO, format = '%(levelname)s : %(message)s', force = True)
 
 def parse_args(args=None):
-    Description=('Pull consensus sequences from viralrecon WSLH report.')
-    Epilog = 'Example usage: python3 viralrecon_pull_consensus.py <LOCAL_WSLH_REPORT> <LOCAL_CONSENSUS_DIR>'
-    parser = argparse.ArgumentParser(description=Description)
+    description= 'Pull consensus sequences from viralrecon WSLH report.'
+    epilog = 'Example usage: python3 viralrecon_pull_consensus.py <LOCAL_WSLH_REPORT> <LOCAL_CONSENSUS_DIR>'
+    parser = argparse.ArgumentParser(description=description, epilog=epilog)
     parser.add_argument('wslh_report',
         help='Report to be get consensus IDs from.')
     parser.add_argument('consensus_dir',
