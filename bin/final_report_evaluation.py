@@ -16,9 +16,15 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 def add_failing_samples(failing_samples, sample_names, column_name):
+    logging.debug("Associating failed column values with samples.")
+
     for sample in sample_names:
+        
+        #If the sample is already present add the column as a value
         if sample in failing_samples:
             failing_samples[sample].append(column_name)
+
+        # If the sample is not present, add it and include the column it failed in as a value
         else:
             failing_samples[sample] = [column_name]
     return failing_samples
@@ -26,19 +32,24 @@ def add_failing_samples(failing_samples, sample_names, column_name):
 def evaluate_columns_c_e(report):
     logging.debug("Evaluating columns C and E.")
 
+    # Setting up dataframe 
     df = pd.read_csv(report)
+
+    # Creating empty dictionary
     failing_samples = {}
 
+    logging.debug("Evaluating column C which cannot be blank")
     failing_samples_c = df[pd.isna(df.iloc[:, 2])].iloc[:, 0].tolist()
     failing_samples = add_failing_samples(failing_samples, failing_samples_c, 'C')
 
+    logging.debug("Evaluating column E which cannot be blank")
     failing_samples_e = df[pd.isna(df.iloc[:, 4])].iloc[:, 0].tolist()
     failing_samples = add_failing_samples(failing_samples, failing_samples_e, 'E')
 
     return df, failing_samples
 
 def evaluate_column_l(df, failing_samples):
-    logging.debug("Evaluating column L.")
+    logging.debug("Evaluating column L which canno.")
 
     failing_samples_l = df[df["depth_after_trimming"] < 100].iloc[:, 0].tolist()
     failing_samples = add_failing_samples(failing_samples, failing_samples_l, 'L')
